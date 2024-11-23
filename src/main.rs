@@ -1,4 +1,4 @@
-use std::{env, fs, process};
+use std::{env, fs, io::{self, Write}, process};
 
 const EXIT_CODE_USAGE: i32 = 64;  // Command line usage error
 const EXIT_CODE_IOERR: i32 = 74;  // IO error
@@ -17,7 +17,20 @@ fn main() {
 }
 
 fn run_prompt() {
-     
+    loop {
+        print!("> ");
+        io::stdout().flush().expect("Error flushing to standard output!");
+        loop {
+            let mut input = String::new();
+            match io::stdin().read_line(&mut input) {
+                Ok(_) => run(&input),
+                Err(e) => {
+                    eprintln!("Error reading input: {e}");
+                    break;
+                }
+            }
+        }
+    }
 }
 
 fn run_file(path: &str) {
