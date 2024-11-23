@@ -1,7 +1,7 @@
 use std::{env, fs, io::{self, Write}, process};
 
-const EXIT_CODE_USAGE: i32 = 64;  // Command line usage error
-const EXIT_CODE_IOERR: i32 = 74;  // IO error
+const EXIT_CODE_USAGE: i32 = 64;  // EX_USAGE in sysexits.h: Command line usage error
+const EXIT_CODE_IOERR: i32 = 74;  // EX_IOERR in sysexits.h: Input/output error
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -22,7 +22,8 @@ fn run_prompt() {
         io::stdout().flush().expect("Error flushing to standard output!");
         let mut input = String::new();
         match io::stdin().read_line(&mut input) {
-            Ok(0) => break,
+            Ok(0) => break, // Ctrl+D (EOF) triggers a graceful exit
+                           // as opposed to Ctrl+C (SIGINT) that forces termination
             Ok(_) => run(&input),
             Err(e) => {
                 eprintln!("Error reading input: {e}");
