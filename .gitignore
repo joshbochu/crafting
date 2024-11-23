@@ -1,1 +1,34 @@
-/target
+# Rust build directory
+/target/
+
+# Rust lock file (some prefer to commit this, but it's optional)
+Cargo.lock
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Debug files
+*.pdb
+
+# Generated documentation
+/doc/
+
+# Environment variables
+.env
+
+# Code coverage files
+*.profraw
+/coverage/
+
+# Backup files
+**/*.rs.bk
+
+# Binary files
+*.exe
+*.dll
+*.dylib
+*.so
