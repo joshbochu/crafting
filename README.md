@@ -8,38 +8,23 @@ rlox
 ├── src
 │   ├── error.rs     # Error handling
 │   ├── lib.rs       # Core interpreter logic
-│   └── main.rs      # CLI interface
+│   ├── main.rs      # CLI interface
+│   ├── scanner.rs   # Lexical analysis
+│   ├── token.rs     # Token definitions
+│   └── tests        # Test suite
 ```
 
 ## Usage
-
 ```bash
-# Run a Lox file
-cargo run path/to/file.lox
-
-# Start REPL
-cargo run
+cargo run [path/to/file.lox]  # Run a file or start REPL
 ```
 
 ## Development
-
-### Prerequisites
-- Rust (stable)
-- Cargo
-
-### Commands
 ```bash
-# Build
-cargo build
-
-# Run tests
-cargo test
-
-# Format code
-cargo fmt
-
-# Run linter
-cargo clippy
+cargo build   # Build project
+cargo test    # Run tests
+cargo fmt     # Format code
+cargo clippy  # Run linter
 ```
 
 ## License
