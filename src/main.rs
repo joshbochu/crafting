@@ -22,8 +22,7 @@ fn run_prompt() {
         io::stdout().flush().expect("Error flushing to standard output!");
         let mut input = String::new();
         match io::stdin().read_line(&mut input) {
-            Ok(0) => break, // Ctrl+D (EOF) triggers a graceful exit
-                           // as opposed to Ctrl+C (SIGINT) that forces termination
+            Ok(0) => break, // Ctrl+D (EOF) triggers a graceful exit vs. Ctrl+C (SIGINT) that forces termination
             Ok(_) => run(&input),
             Err(e) => {
                 eprintln!("Error reading input: {e}");
