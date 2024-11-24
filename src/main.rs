@@ -1,4 +1,5 @@
 use std::{env, fs, io::{self, Write}, process};
+use rlox::scanner::Scanner;
 
 const EXIT_CODE_USAGE: i32 = 64;  // EX_USAGE in sysexits.h: Command line usage error
 const EXIT_CODE_IOERR: i32 = 74;  // EX_IOERR in sysexits.h: Input/output error
