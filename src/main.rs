@@ -43,5 +43,9 @@ fn run_file(path: &str) {
 }
 
 fn run(source: &str) {
-    println!("Source code to interpret: {}", source);
+    let scanner = Scanner::new(source);
+    let tokens = scanner.scan_tokens();
+    for token in tokens {
+        println!("{:?}", token);
+    }
 }
