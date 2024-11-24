@@ -16,6 +16,7 @@
 //   eof
 
 #[derive(Debug)]
+#[derive(Clone)]
 pub enum TokenType {
     // Single-character tokens
     LeftParen, RightParen, LeftBrace, RightBrace,
@@ -38,14 +39,15 @@ pub enum TokenType {
 }
 
 #[derive(Debug)]
+#[derive(Clone)]
 pub enum Literal {
     Number(f64),
     Str(String),
     Boolean(bool),
-    Nil,
 }
 
 #[derive(Debug)]
+#[derive(Clone)]
 pub struct Token {
     pub token_type: TokenType,
     pub lexeme: String,

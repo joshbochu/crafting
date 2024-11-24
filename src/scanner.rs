@@ -1,19 +1,73 @@
-use crate::token::Token;
+use crate::token::{Token, TokenType, Literal};
+use crate::lox::Lox;
 
-pub struct Scanner {
+pub struct Scanner<'a> {
+    lox: &'a mut Lox,
     source: String,
-    tokens: Vec<Token>
+    chars: Vec<char>,
+    tokens: Vec<Token>,
+    start: usize,
+    current: usize,
+    line: usize,
 }
 
-impl Scanner {
-    pub fn new(source: &str) -> Self {
+impl<'a> Scanner<'a> {
+    pub fn new(source: &str, lox: &'a mut Lox) -> Self {
         Scanner {
-            source: source.to_string(),
-            tokens: Vec::new() // On init
+            lox,
+            source: String::from(source),
+            chars: source.chars().collect(),
+            tokens: Vec::new(),
+            start: 0,
+            current: 0,
+            line: 1,
         }
     }
 
-    pub fn scan_tokens(&self) -> Vec<Token> {
-        Vec::new() // TODO
+    pub fn scan_tokens(&mut self) -> Vec<Token> {
+        while !self.is_at_end() {
+            self.start = self.current;
+            self.scan_token();
+        }
+        
+        self.tokens.push(Token::new(TokenType::Eof, String::from(""), None, self.line));
+        self.tokens.to_vec()
+    }
+    
+    pub fn is_at_end(&self) -> bool {
+        self.current >= self.source.len()
+    }
+    
+    pub fn scan_token(&mut self) {
+        let c = self.advance();
+        match c {
+            '(' => self.add_token(TokenType::LeftParen),
+            ')' => self.add_token(TokenType::RightParen),
+            '{' => self.add_token(TokenType::LeftBrace),
+            '}' => self.add_token(TokenType::RightBrace),
+            ',' => self.add_token(TokenType::Comma),
+            '.' => self.add_token(TokenType::Dot),
+            '-' => self.add_token(TokenType::Minus),
+            '+' => self.add_token(TokenType::Plus),
+            ';' => self.add_token(TokenType::Semicolon),
+            '/' => self.add_token(TokenType::Slash),
+            '*' => self.add_token(TokenType::Star),
+            _ => self.lox.error(self.line, "Unexpected character.")
+        } 
+    }
+    
+    pub fn advance(&mut self) -> char { 
+        let c = self.chars[self.current];
+        self.current += 1;
+        return c;
+    }
+    
+    pub fn add_token(&mut self, token_type: TokenType) {
+        self.add_token_with_literal(token_type, None);
+    }
+    
+    pub fn add_token_with_literal(&mut self, token_type: TokenType, literal: Option<Literal>) {
+        let text = self.source[self.start..self.current].to_string();
+        self.tokens.push(Token::new(token_type, text, literal, self.line));
     }
 }
