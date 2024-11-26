@@ -56,7 +56,6 @@ impl<'a> Scanner<'a> {
             '-' => self.add_token(TokenType::Minus),
             '+' => self.add_token(TokenType::Plus),
             ';' => self.add_token(TokenType::Semicolon),
-            '/' => self.add_token(TokenType::Slash),
             '*' => self.add_token(TokenType::Star),
             '!' => {
                 if self.is_match('=') {
@@ -86,7 +85,24 @@ impl<'a> Scanner<'a> {
                     self.add_token(TokenType::Greater)
                 }
             }
+            '/' => {
+                if self.is_match('/') {
+                    while self.peek() != '\n' && !self.is_at_end() {
+                        self.advance();
+                    }
+                } else {
+                    self.add_token(TokenType::Slash)
+                }
+            }
             _ => self.lox.error(self.line, "Unexpected character."),
+        }
+    }
+
+    pub fn peek(&mut self) -> char {
+        if self.is_at_end() {
+            return '\0';
+        } else {
+            return self.chars[self.current];
         }
     }
 
