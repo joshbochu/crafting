@@ -94,6 +94,8 @@ impl<'a> Scanner<'a> {
                     self.add_token(TokenType::Slash)
                 }
             }
+            ' ' | '\r' | '\t' => {} // Ignore whitespace
+            '\n' => self.line += 1,
             _ => self.lox.error(self.line, "Unexpected character."),
         }
     }
