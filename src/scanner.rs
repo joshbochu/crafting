@@ -1,5 +1,5 @@
-use crate::token::{Token, TokenType, Literal};
 use crate::lox::Lox;
+use crate::token::{Literal, Token, TokenType};
 
 pub struct Scanner<'a> {
     lox: &'a mut Lox,
@@ -29,15 +29,21 @@ impl<'a> Scanner<'a> {
             self.start = self.current;
             self.scan_token();
         }
-        
-        self.tokens.push(Token::new(TokenType::Eof, String::from(""), None, self.line));
+
+        self.tokens.push(Token::new(
+            TokenType::Eof,
+            String::from(""),
+            None,
+            self.line,
+        ));
+
         self.tokens.to_vec()
     }
-    
+
     pub fn is_at_end(&self) -> bool {
         self.current >= self.source.len()
     }
-    
+
     pub fn scan_token(&mut self) {
         let c = self.advance();
         match c {
@@ -52,22 +58,59 @@ impl<'a> Scanner<'a> {
             ';' => self.add_token(TokenType::Semicolon),
             '/' => self.add_token(TokenType::Slash),
             '*' => self.add_token(TokenType::Star),
-            _ => self.lox.error(self.line, "Unexpected character.")
-        } 
+            '!' => {
+                if self.is_match('=') {
+                    self.add_token(TokenType::BangEqual)
+                } else {
+                    self.add_token(TokenType::Bang)
+                }
+            }
+            '=' => {
+                if self.is_match('=') {
+                    self.add_token(TokenType::EqualEqual)
+                } else {
+                    self.add_token(TokenType::Equal)
+                }
+            }
+            '<' => {
+                if self.is_match('=') {
+                    self.add_token(TokenType::LessEqual)
+                } else {
+                    self.add_token(TokenType::Less)
+                }
+            }
+            '>' => {
+                if self.is_match('=') {
+                    self.add_token(TokenType::GreaterEqual)
+                } else {
+                    self.add_token(TokenType::Greater)
+                }
+            }
+            _ => self.lox.error(self.line, "Unexpected character."),
+        }
     }
-    
-    pub fn advance(&mut self) -> char { 
+
+    pub fn advance(&mut self) -> char {
         let c = self.chars[self.current];
         self.current += 1;
         return c;
     }
-    
+
     pub fn add_token(&mut self, token_type: TokenType) {
         self.add_token_with_literal(token_type, None);
     }
-    
+
     pub fn add_token_with_literal(&mut self, token_type: TokenType, literal: Option<Literal>) {
         let text = self.source[self.start..self.current].to_string();
-        self.tokens.push(Token::new(token_type, text, literal, self.line));
+        self.tokens
+            .push(Token::new(token_type, text, literal, self.line));
+    }
+
+    pub fn is_match(&mut self, expected: char) -> bool {
+        if self.is_at_end() || self.chars[self.current] != expected {
+            return false;
+        }
+        self.current += 1;
+        return true;
     }
 }
