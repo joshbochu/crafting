@@ -96,8 +96,32 @@ impl<'a> Scanner<'a> {
             }
             ' ' | '\r' | '\t' => {} // Ignore whitespace
             '\n' => self.line += 1,
+            '"' => self.string(),
             _ => self.lox.error(self.line, "Unexpected character."),
         }
+    }
+
+    pub fn string(&mut self) {
+        while !self.is_at_end() && self.peek() != '"' {
+            if self.peek() == '\n' {
+                self.line += 1
+            }
+            let _ = self.advance();
+        }
+
+        if self.is_at_end() {
+            self.lox.error(self.line, "Unterminated string");
+            return;
+        }
+
+        self.advance();
+
+        self.add_token_with_literal(
+            TokenType::String,
+            Some(Literal::Str(
+                self.source[self.start..self.current].to_string(),
+            )),
+        );
     }
 
     pub fn peek(&mut self) -> char {
